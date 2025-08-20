@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drafting Resource Library</title>
-    <meta name="description" content="SharePoint Drafting Resource Library">
+    <meta name="description" content="Drafting Resource Library">
     <meta name="theme-color" content="#0078d4">
     
     <!-- PWA Meta Tags -->
@@ -664,7 +664,7 @@
         <div class="empty-state" id="emptyState" style="display: none;">
             <div class="empty-icon">📁</div>
             <div class="empty-title">No resources yet</div>
-            <div class="empty-text">Add your first Drafting Resource to get started</div>
+            <div class="empty-text">Add your first drafting resource to get started</div>
         </div>
     </div>
 
@@ -674,10 +674,10 @@
     <!-- Modals -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModalOverlay(event)"></div>
     
-    <!-- Add Modal -->
+    <!-- Add/Edit Modal -->
     <div id="addModal" class="modal">
         <div class="modal-header">
-            <div class="modal-title">New Resource</div>
+            <div class="modal-title" id="modalTitle">New Resource</div>
             <button class="modal-close" onclick="closeModal('addModal')">✕</button>
         </div>
         <div class="modal-body">
@@ -717,7 +717,7 @@
         </div>
         <div class="modal-footer">
             <button class="btn" onclick="closeModal('addModal')">Cancel</button>
-            <button class="btn btn-primary" onclick="saveResource()">Save</button>
+            <button class="btn btn-primary" id="saveBtn" onclick="saveResource()">Save</button>
         </div>
     </div>
 
@@ -761,9 +761,13 @@
             renderResources();
             renderTagFilters();
             setupLinkTypeToggle();
+            updateTokenButton();
             
-            // Try to load from gist if configured
-            if (GIST_ID) {
+            // Try to load from gist if configured and token available
+            if (GIST_ID && GIST_TOKEN) {
+                loadFromGist();
+            } else if (GIST_ID) {
+                // Try read-only load (no token needed for public gists)
                 loadFromGist();
             }
         });
@@ -882,7 +886,7 @@
                 if (!response.ok) throw new Error('Failed to fetch gist');
                 
                 const gist = await response.json();
-                const content = gist.files['resources.json'].content;
+                const content = gist.files['drafting-resources.json'].content;
                 const data = JSON.parse(content);
                 
                 if (data.resources && data.tags) {
@@ -925,7 +929,7 @@
                     },
                     body: JSON.stringify({
                         files: {
-                            'resources.json': {
+                            'drafting-resources.json': {
                                 content: JSON.stringify(data, null, 2)
                             }
                         }
@@ -1013,6 +1017,7 @@
                         </div>
                         <div class="item-actions" onclick="event.stopPropagation()">
                             <button class="icon-btn" onclick="openResource(${resourceIndex})" title="Open">↗️</button>
+                            <button class="icon-btn" onclick="editResource(${resourceIndex})" title="Edit">✏️</button>
                             <button class="icon-btn" onclick="deleteResource(${resourceIndex})" title="Delete">🗑️</button>
                         </div>
                     </div>
@@ -1306,23 +1311,26 @@
 
         // Show help
         function showHelp() {
-            alert(`Drafting Resource Library - Help
+            alert(`Training Resource Library - Help
             
 HOW TO USE:
-1. Click "➕ New" to add a resource
-2. Choose between SharePoint web link or local file path
-3. Enter title, link, and optional notes
-4. Select relevant tags to organize
-5. Click on resources to open them
+1. Click "🔑 Setup Token" to enable cloud sync
+2. Click "➕ New" to add a resource
+3. Choose between SharePoint web link or local file path
+4. Enter title, link, and optional notes
+5. Select relevant tags to organize
+6. Click on resources to open them
+
+CLOUD SYNC SETUP:
+1. Click "🔑 Setup Token" button
+2. Go to GitHub Settings → Developer settings → Personal access tokens
+3. Create new token (classic) with 'gist' permission
+4. Copy and enter the token when prompted
+5. Token is only stored for this browser session
 
 LINK TYPES:
 • SharePoint Web Link: Opens in browser/new tab
 • Local File Path: Opens in File Explorer (relative path from OneDrive root)
-
-GITHUB SYNC:
-• Configure GIST_ID and GIST_TOKEN at top of file
-• Click "🔄 Sync" to save/load from GitHub Gist
-• Data syncs automatically after changes when configured
 
 TIPS:
 • Use search to find resources quickly (searches title, tags, and notes)
