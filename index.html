@@ -754,6 +754,7 @@
         let resources = [];
         let tags = ['Training', 'Documentation', 'Policy', 'Procedure', 'Tutorial', 'Reference', 'Guidelines', 'Template'];
         let activeFilters = [];
+        let editingIndex = -1; // Track which resource is being edited
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -783,7 +784,7 @@
                 radio.addEventListener('change', () => {
                     if (radio.value === 'file') {
                         linkLabel.textContent = 'Local File Path';
-                        linkHelp.innerHTML = 'Enter the relative path from OneDrive root (e.g., Company\\Department\\Project\\file.pdf)<br>Path should already be stripped of user-specific parts.';
+                        linkHelp.innerHTML = 'Enter the relative path from OneDrive root (e.g., Company\\Department\\Project\\file.pdf)<br>Path should already be stripped of user-specific parts.<br><strong>Note:</strong> Files will copy path to clipboard - paste in File Explorer address bar.';
                         linkInput.placeholder = 'Company\\Department\\Project\\file.pdf';
                     } else {
                         linkLabel.textContent = 'SharePoint URL';
@@ -1030,22 +1031,81 @@
             const resource = resources[index];
             
             if (resource.linkType === 'file') {
-                // Try to open with file explorer
-                try {
-                    const filePath = resource.link.replace(/\\/g, '/');
-                    window.open(`file:///${filePath}`, '_blank');
-                } catch (error) {
-                    // Fallback - show path to copy
-                    navigator.clipboard.writeText(resource.link).then(() => {
-                        showMessage('File path copied to clipboard - paste in File Explorer', 'info');
+                // For local files, copy path and show instructions
+                const filePath = resource.link;
+                
+                if (navigator.clipboard && window.isSecureContext) {
+                    // Try to copy to clipboard
+                    navigator.clipboard.writeText(filePath).then(() => {
+                        showMessage('File path copied! Paste in File Explorer address bar', 'success');
                     }).catch(() => {
-                        showMessage(`Copy this path to File Explorer: ${resource.link}`, 'info');
+                        showFilePathModal(filePath);
                     });
+                } else {
+                    // Show modal with path to copy manually
+                    showFilePathModal(filePath);
                 }
             } else {
                 // Regular web link
                 window.open(resource.link, '_blank');
             }
+        }
+
+        // Show file path modal
+        function showFilePathModal(filePath) {
+            const message = `Copy this path to File Explorer:\n\n${filePath}\n\nInstructions:\n1. Open File Explorer (Windows + E)\n2. Paste this path in the address bar\n3. Press Enter`;
+            
+            // Create a text area for easy copying
+            const textArea = document.createElement('textarea');
+            textArea.value = filePath;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showMessage('Path copied! Paste in File Explorer address bar', 'success');
+            } catch (err) {
+                document.body.removeChild(textArea);
+                alert(message);
+            }
+        }
+
+        // Edit resource
+        function editResource(index) {
+            const resource = resources[index];
+            editingIndex = index;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Resource';
+            document.getElementById('saveBtn').textContent = 'Update';
+            
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('addModal').classList.add('active');
+            renderTagSelector();
+            
+            // Populate form with existing data
+            document.getElementById('resourceTitle').value = resource.title;
+            document.getElementById('resourceLink').value = resource.link;
+            document.getElementById('resourceNotes').value = resource.notes || '';
+            
+            // Set link type
+            const linkType = resource.linkType || 'web';
+            document.querySelector(`input[name="linkType"][value="${linkType}"]`).checked = true;
+            
+            // Trigger link type change to update UI
+            const event = new Event('change');
+            document.querySelector(`input[name="linkType"][value="${linkType}"]`).dispatchEvent(event);
+            
+            // Select existing tags
+            setTimeout(() => {
+                document.querySelectorAll('#tagSelector .tag-option').forEach(el => {
+                    if (resource.tags.includes(el.textContent)) {
+                        el.classList.add('selected');
+                    }
+                });
+            }, 50);
         }
 
         // Render tag filters
@@ -1073,6 +1133,10 @@
 
         // Modal functions
         function openAddModal() {
+            editingIndex = -1; // Reset editing state
+            document.getElementById('modalTitle').textContent = 'New Resource';
+            document.getElementById('saveBtn').textContent = 'Save';
+            
             document.getElementById('modalOverlay').classList.add('active');
             document.getElementById('addModal').classList.add('active');
             renderTagSelector();
@@ -1083,6 +1147,10 @@
             document.getElementById('resourceNotes').value = '';
             document.querySelector('input[name="linkType"][value="web"]').checked = true;
             document.querySelectorAll('#tagSelector .tag-option').forEach(el => el.classList.remove('selected'));
+            
+            // Trigger link type change to update UI
+            const event = new Event('change');
+            document.querySelector('input[name="linkType"][value="web"]').dispatchEvent(event);
         }
 
         function openTagModal() {
@@ -1148,20 +1216,35 @@
                 }
             }
             
-            resources.push({
-                id: Date.now(),
+            const resourceData = {
                 title,
                 link,
                 linkType,
                 notes,
-                tags: selectedTags,
-                createdAt: new Date().toISOString()
-            });
+                tags: selectedTags
+            };
+            
+            if (editingIndex >= 0) {
+                // Update existing resource
+                resources[editingIndex] = {
+                    ...resources[editingIndex],
+                    ...resourceData,
+                    updatedAt: new Date().toISOString()
+                };
+                showMessage('Resource updated successfully', 'success');
+            } else {
+                // Add new resource
+                resources.push({
+                    id: Date.now(),
+                    ...resourceData,
+                    createdAt: new Date().toISOString()
+                });
+                showMessage('Resource added successfully', 'success');
+            }
             
             saveData();
             renderResources();
             closeModal('addModal');
-            showMessage('Resource added successfully', 'success');
             
             // Auto-sync if configured
             if (GIST_ID && GIST_TOKEN) {
@@ -1330,7 +1413,7 @@ CLOUD SYNC SETUP:
 
 LINK TYPES:
 • SharePoint Web Link: Opens in browser/new tab
-• Local File Path: Opens in File Explorer (relative path from OneDrive root)
+• Local File Path: Copies path to clipboard - paste in File Explorer address bar
 
 TIPS:
 • Use search to find resources quickly (searches title, tags, and notes)
