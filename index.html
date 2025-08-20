@@ -816,7 +816,7 @@
                 if (!response.ok) throw new Error('Failed to fetch gist');
                 
                 const gist = await response.json();
-                const content = gist.files['resources.json'].content;
+                const content = gist.files['drafting-resources.json'].content;
                 const data = JSON.parse(content);
                 
                 if (data.resources && data.tags) {
@@ -859,7 +859,7 @@
                     },
                     body: JSON.stringify({
                         files: {
-                            'resources.json': {
+                            'drafting-resources.json': {
                                 content: JSON.stringify(data, null, 2)
                             }
                         }
