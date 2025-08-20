@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Resource Library</title>
+    <meta name="description" content="SharePoint Training Resource Library">
+    <meta name="theme-color" content="#0078d4">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlRyYWluaW5nIFJlc291cmNlIExpYnJhcnkiLAogICJzaG9ydF9uYW1lIjogIlJlc291cmNlcyIsCiAgImRlc2NyaXB0aW9uIjogIlNoYXJlUG9pbnQgVHJhaW5pbmcgUmVzb3VyY2UgTGlicmFyeSIsCiAgInN0YXJ0X3VybCI6ICIvIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAidGhlbWVfY29sb3IiOiAiIzAwNzhkNCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2YzZjJmMSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImljb25zL2ljb24tNTEyeDUxMi5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIsCiAgICAgICJwdXJwb3NlIjogImFueSIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiaWNvbnMvaWNvbi0yNTZ4MjU2LnBuZyIsCiAgICAgICJzaXplcyI6ICIyNTZ4MjU2IiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJpY29ucy9pY29uLTE5MngxOTIucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImljb25zL2ljb24tMTQ0eDE0NC5wbmciLAogICAgICAic2l6ZXMiOiAiMTQ0eDE0NCIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiaWNvbnMvaWNvbi0xMjh4MTI4LnBuZyIsCiAgICAgICJzaXplcyI6ICIxMjh4MTI4IiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJpY29ucy9pY29uLTk2eDk2LnBuZyIsCiAgICAgICJzaXplcyI6ICI5Nng5NiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Microsoft Design System Variables */
+        :root {
+            --ms-primary: #0078d4;
+            --ms-primary-hover: #106ebe;
+            --ms-white: #ffffff;
+            --ms-gray-10: #faf9f8;
+            --ms-gray-20: #f3f2f1;
+            --ms-gray-30: #edebe9;
+            --ms-gray-40: #e1dfdd;
+            --ms-gray-130: #605e5c;
+            --ms-gray-160: #323130;
+            --ms-font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            --ms-radius: 2px;
+        }
+
+        body {
+            font-family: var(--ms-font-family);
+            background: var(--ms-gray-20);
+            color: var(--ms-gray-160);
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--ms-primary);
+            color: var(--ms-white);
+            padding: 0 20px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .top-bar-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .sync-status {
+            margin-left: auto;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sync-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #90e89a;
+        }
+
+        .sync-indicator.syncing {
+            background: #ffd23f;
+            animation: pulse 1.5s infinite;
+        }
+
+        .sync-indicator.error {
+            background: #d83b01;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: var(--ms-white);
+            padding: 32px;
+            margin-bottom: 20px;
+            border: 1px solid var(--ms-gray-30);
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--ms-gray-130);
+        }
+
+        /* Action Bar */
+        .action-bar {
+            background: var(--ms-white);
+            border: 1px solid var(--ms-gray-30);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            height: 32px;
+            background: var(--ms-white);
+            border: 1px solid var(--ms-gray-40);
+            color: var(--ms-gray-160);
+            font-size: 14px;
+            font-family: var(--ms-font-family);
+            cursor: pointer;
+            transition: all 0.1s;
+            border-radius: var(--ms-radius);
+        }
+
+        .btn:hover {
+            background: var(--ms-gray-10);
+            border-color: var(--ms-gray-130);
+        }
+
+        .btn-primary {
+            background: var(--ms-primary);
+            border-color: var(--ms-primary);
+            color: var(--ms-white);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: var(--ms-primary-hover);
+            border-color: var(--ms-primary-hover);
+        }
+
+        /* Search Section */
+        .search-section {
+            background: var(--ms-white);
+            border: 1px solid var(--ms-gray-30);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 6px 12px 6px 32px;
+            border: 1px solid var(--ms-gray-40);
+            border-radius: var(--ms-radius);
+            font-size: 14px;
+            height: 32px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--ms-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 8px;
+            color: var(--ms-gray-130);
+            pointer-events: none;
+        }
+
+        .tag-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag-filter {
+            padding: 4px 12px;
+            background: var(--ms-gray-10);
+            border: 1px solid var(--ms-gray-40);
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .tag-filter:hover {
+            background: var(--ms-gray-20);
+        }
+
+        .tag-filter.active {
+            background: var(--ms-primary);
+            border-color: var(--ms-primary);
+            color: var(--ms-white);
+        }
+
+        /* Resource List */
+        .resource-list {
+            background: var(--ms-white);
+            border: 1px solid var(--ms-gray-30);
+        }
+
+        .list-header {
+            display: grid;
+            grid-template-columns: 48px 1fr 200px 100px;
+            padding: 12px 16px;
+            background: var(--ms-gray-10);
+            border-bottom: 1px solid var(--ms-gray-30);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ms-gray-130);
+        }
+
+        .list-item {
+            display: grid;
+            grid-template-columns: 48px 1fr 200px 100px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--ms-gray-20);
+            align-items: center;
+            transition: background 0.1s;
+            cursor: pointer;
+        }
+
+        .list-item:hover {
+            background: var(--ms-gray-10);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--ms-primary);
+            color: var(--ms-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--ms-radius);
+        }
+
+        .item-icon.file-type {
+            background: #8764b8;
+        }
+
+        .item-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .item-title {
+            font-weight: 500;
+            color: var(--ms-gray-160);
+        }
+
+        .item-notes {
+            font-size: 12px;
+            color: var(--ms-gray-130);
+            font-style: italic;
+        }
+
+        .item-link-type {
+            font-size: 10px;
+            color: var(--ms-gray-130);
+            background: var(--ms-gray-20);
+            padding: 2px 6px;
+            border-radius: 8px;
+            width: fit-content;
+        }
+
+        .item-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .item-tag {
+            padding: 2px 8px;
+            background: var(--ms-gray-20);
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--ms-gray-130);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--ms-radius);
+            color: var(--ms-gray-130);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .icon-btn:hover {
+            background: var(--ms-gray-20);
+            border-color: var(--ms-gray-40);
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 80px 40px;
+            text-align: center;
+            background: var(--ms-white);
+            border: 1px solid var(--ms-gray-30);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            color: var(--ms-gray-40);
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            color: var(--ms-gray-130);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background: var(--ms-white);
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+            transition: right 0.3s;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal.active {
+            right: 0;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--ms-gray-30);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--ms-gray-130);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .modal-close:hover {
+            background: var(--ms-gray-20);
+        }
+
+        .modal-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--ms-gray-30);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 6px 12px;
+            border: 1px solid var(--ms-gray-40);
+            border-radius: var(--ms-radius);
+            font-size: 14px;
+            height: 32px;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--ms-gray-40);
+            border-radius: var(--ms-radius);
+            font-size: 14px;
+            font-family: var(--ms-font-family);
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--ms-primary);
+        }
+
+        .form-help {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--ms-gray-130);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .tag-selector {
+            border: 1px solid var(--ms-gray-40);
+            border-radius: var(--ms-radius);
+            padding: 8px;
+            min-height: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .tag-option {
+            padding: 4px 10px;
+            background: var(--ms-gray-10);
+            border: 1px solid var(--ms-gray-40);
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .tag-option.selected {
+            background: var(--ms-primary);
+            border-color: var(--ms-primary);
+            color: var(--ms-white);
+        }
+
+        /* Tag List */
+        .tag-list {
+            border: 1px solid var(--ms-gray-30);
+            border-radius: var(--ms-radius);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .tag-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--ms-gray-20);
+        }
+
+        .tag-list-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Message */
+        .message {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--ms-white);
+            padding: 12px 20px;
+            border-radius: var(--ms-radius);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 2000;
+            transition: transform 0.3s;
+            border-left: 4px solid var(--ms-primary);
+            max-width: 400px;
+        }
+
+        .message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .message.error {
+            border-left-color: #d83b01;
+        }
+
+        .message.success {
+            border-left-color: #107c10;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+            
+            .list-header,
+            .list-item {
+                grid-template-columns: 48px 1fr;
+            }
+            
+            .list-header > *:nth-child(n+3),
+            .list-item > *:nth-child(n+3) {
+                display: none;
+            }
+            
+            .modal {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <span class="top-bar-icon">📚</span>
+        <span>Training Resource Library</span>
+        <div class="sync-status" id="syncStatus">
+            <div class="sync-indicator" id="syncIndicator"></div>
+            <span id="syncText">Local</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Training Resources</h1>
+            <p class="page-subtitle">Centralized repository for training materials and documentation</p>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="openAddModal()">
+                ➕ New
+            </button>
+            <button class="btn" onclick="openTagModal()">
+                🏷️ Manage tags
+            </button>
+            <button class="btn" onclick="syncToGist()">
+                🔄 Sync
+            </button>
+            <button class="btn" onclick="exportData()">
+                💾 Export
+            </button>
+            <button class="btn" onclick="document.getElementById('importFile').click()">
+                📁 Import
+            </button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            <button class="btn" onclick="showHelp()" style="margin-left: auto;">
+                ❓ Help
+            </button>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search documents" oninput="filterResources()">
+            </div>
+            <div class="tag-filters" id="tagFilters"></div>
+        </div>
+
+        <!-- Resource List -->
+        <div class="resource-list" id="resourceList">
+            <div class="list-header">
+                <div>Type</div>
+                <div>Name</div>
+                <div>Tags</div>
+                <div>Actions</div>
+            </div>
+            <div id="resourceItems"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📁</div>
+            <div class="empty-title">No resources yet</div>
+            <div class="empty-text">Add your first training resource to get started</div>
+        </div>
+    </div>
+
+    <!-- Message -->
+    <div id="message" class="message"></div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModalOverlay(event)"></div>
+    
+    <!-- Add Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">New Resource</div>
+            <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-input" id="resourceTitle" placeholder="Enter resource title">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Link Type</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="linkType" value="web" checked>
+                        <span>SharePoint Web Link</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="linkType" value="file">
+                        <span>Local File Path</span>
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="linkLabel">SharePoint URL</label>
+                <input type="text" class="form-input" id="resourceLink" placeholder="Paste SharePoint link">
+                <div class="form-help" id="linkHelp">
+                    Paste any SharePoint link - document, page, or folder.<br>
+                    The resource will open in a new tab when clicked.
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notes (Optional)</label>
+                <textarea class="form-textarea" id="resourceNotes" placeholder="Add any notes or description about this resource"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tags</label>
+                <div class="tag-selector" id="tagSelector"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('addModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveResource()">Save</button>
+        </div>
+    </div>
+
+    <!-- Tag Modal -->
+    <div id="tagModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Manage Tags</div>
+            <button class="modal-close" onclick="closeModal('tagModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Add New Tag</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" class="form-input" id="newTagInput" placeholder="Tag name" style="flex: 1;">
+                    <button class="btn btn-primary" onclick="addTag()">Add</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Existing Tags</label>
+                <div class="tag-list" id="tagList"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="closeModal('tagModal')">Done</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Replace with your GitHub Gist details
+        const GIST_ID = ''; // Add your gist ID here
+        const GIST_TOKEN = ''; // Add your GitHub token here (optional for read-only)
+
+        // Data
+        let resources = [];
+        let tags = ['Training', 'Documentation', 'Policy', 'Procedure', 'Tutorial', 'Reference', 'Guidelines', 'Template'];
+        let activeFilters = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            renderResources();
+            renderTagFilters();
+            setupLinkTypeToggle();
+            
+            // Try to load from gist if configured
+            if (GIST_ID) {
+                loadFromGist();
+            }
+        });
+
+        // Setup link type toggle
+        function setupLinkTypeToggle() {
+            const radioButtons = document.querySelectorAll('input[name="linkType"]');
+            const linkLabel = document.getElementById('linkLabel');
+            const linkHelp = document.getElementById('linkHelp');
+            const linkInput = document.getElementById('resourceLink');
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'file') {
+                        linkLabel.textContent = 'Local File Path';
+                        linkHelp.innerHTML = 'Enter the relative path from OneDrive root (e.g., Company\\Department\\Project\\file.pdf)<br>Path should already be stripped of user-specific parts.';
+                        linkInput.placeholder = 'Company\\Department\\Project\\file.pdf';
+                    } else {
+                        linkLabel.textContent = 'SharePoint URL';
+                        linkHelp.innerHTML = 'Paste any SharePoint link - document, page, or folder.<br>The resource will open in a new tab when clicked.';
+                        linkInput.placeholder = 'Paste SharePoint link';
+                    }
+                });
+            });
+        }
+
+        // Sync status functions
+        function setSyncStatus(status, text) {
+            const indicator = document.getElementById('syncIndicator');
+            const statusText = document.getElementById('syncText');
+            
+            indicator.className = `sync-indicator ${status}`;
+            statusText.textContent = text;
+        }
+
+        // Show message
+        function showMessage(text, type = 'info') {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+
+        // GitHub Gist functions
+        async function loadFromGist() {
+            if (!GIST_ID) return;
+            
+            setSyncStatus('syncing', 'Loading...');
+            
+            try {
+                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`);
+                if (!response.ok) throw new Error('Failed to fetch gist');
+                
+                const gist = await response.json();
+                const content = gist.files['resources.json'].content;
+                const data = JSON.parse(content);
+                
+                if (data.resources && data.tags) {
+                    resources = data.resources;
+                    tags = data.tags;
+                    saveData(); // Save to local storage as backup
+                    renderResources();
+                    renderTagFilters();
+                    setSyncStatus('', 'Synced');
+                    showMessage('Data loaded from cloud', 'success');
+                }
+            } catch (error) {
+                console.error('Failed to load from gist:', error);
+                setSyncStatus('error', 'Sync failed');
+                showMessage('Failed to sync - using local data', 'error');
+            }
+        }
+
+        async function saveToGist() {
+            if (!GIST_ID || !GIST_TOKEN) {
+                showMessage('Gist not configured - saved locally only', 'error');
+                return;
+            }
+            
+            setSyncStatus('syncing', 'Syncing...');
+            
+            try {
+                const data = {
+                    version: '2.0',
+                    lastSync: new Date().toISOString(),
+                    resources,
+                    tags
+                };
+                
+                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${GIST_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            'resources.json': {
+                                content: JSON.stringify(data, null, 2)
+                            }
+                        }
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to save to gist');
+                
+                setSyncStatus('', 'Synced');
+                showMessage('Synced to cloud successfully', 'success');
+            } catch (error) {
+                console.error('Failed to save to gist:', error);
+                setSyncStatus('error', 'Sync failed');
+                showMessage('Sync failed - saved locally only', 'error');
+            }
+        }
+
+        function syncToGist() {
+            saveToGist();
+        }
+
+        // Load data
+        function loadData() {
+            const savedResources = localStorage.getItem('trainingResources');
+            const savedTags = localStorage.getItem('trainingTags');
+            if (savedResources) resources = JSON.parse(savedResources);
+            if (savedTags) tags = JSON.parse(savedTags);
+        }
+
+        // Save data
+        function saveData() {
+            localStorage.setItem('trainingResources', JSON.stringify(resources));
+            localStorage.setItem('trainingTags', JSON.stringify(tags));
+        }
+
+        // Render resources
+        function renderResources() {
+            const list = document.getElementById('resourceList');
+            const items = document.getElementById('resourceItems');
+            const empty = document.getElementById('emptyState');
+            
+            let filtered = resources;
+            
+            // Search
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            if (search) {
+                filtered = filtered.filter(r => 
+                    r.title.toLowerCase().includes(search) ||
+                    r.tags.some(t => t.toLowerCase().includes(search)) ||
+                    (r.notes && r.notes.toLowerCase().includes(search))
+                );
+            }
+            
+            // Filter tags
+            if (activeFilters.length > 0) {
+                filtered = filtered.filter(r =>
+                    activeFilters.every(f => r.tags.includes(f))
+                );
+            }
+            
+            if (filtered.length === 0) {
+                list.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+            
+            list.style.display = 'block';
+            empty.style.display = 'none';
+            
+            items.innerHTML = filtered.map(r => {
+                const resourceIndex = resources.indexOf(r);
+                const linkTypeIcon = r.linkType === 'file' ? '📁' : '📄';
+                const linkTypeText = r.linkType === 'file' ? 'File' : 'Web';
+                
+                return `
+                    <div class="list-item" onclick="openResource(${resourceIndex})">
+                        <div class="item-icon ${r.linkType === 'file' ? 'file-type' : ''}">${linkTypeIcon}</div>
+                        <div class="item-content">
+                            <div class="item-title">${r.title}</div>
+                            ${r.notes ? `<div class="item-notes">${r.notes}</div>` : ''}
+                            <div class="item-link-type">${linkTypeText}</div>
+                        </div>
+                        <div class="item-tags">
+                            ${r.tags.map(t => `<span class="item-tag">${t}</span>`).join('')}
+                        </div>
+                        <div class="item-actions" onclick="event.stopPropagation()">
+                            <button class="icon-btn" onclick="openResource(${resourceIndex})" title="Open">↗️</button>
+                            <button class="icon-btn" onclick="deleteResource(${resourceIndex})" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Open resource
+        function openResource(index) {
+            const resource = resources[index];
+            
+            if (resource.linkType === 'file') {
+                // Try to open with file explorer
+                try {
+                    const filePath = resource.link.replace(/\\/g, '/');
+                    window.open(`file:///${filePath}`, '_blank');
+                } catch (error) {
+                    // Fallback - show path to copy
+                    navigator.clipboard.writeText(resource.link).then(() => {
+                        showMessage('File path copied to clipboard - paste in File Explorer', 'info');
+                    }).catch(() => {
+                        showMessage(`Copy this path to File Explorer: ${resource.link}`, 'info');
+                    });
+                }
+            } else {
+                // Regular web link
+                window.open(resource.link, '_blank');
+            }
+        }
+
+        // Render tag filters
+        function renderTagFilters() {
+            const container = document.getElementById('tagFilters');
+            container.innerHTML = tags.map(tag => `
+                <span class="tag-filter ${activeFilters.includes(tag) ? 'active' : ''}" 
+                      onclick="toggleFilter('${tag}')">${tag}</span>
+            `).join('');
+        }
+
+        // Toggle filter
+        function toggleFilter(tag) {
+            const idx = activeFilters.indexOf(tag);
+            if (idx > -1) activeFilters.splice(idx, 1);
+            else activeFilters.push(tag);
+            renderTagFilters();
+            renderResources();
+        }
+
+        // Filter resources
+        function filterResources() {
+            renderResources();
+        }
+
+        // Modal functions
+        function openAddModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('addModal').classList.add('active');
+            renderTagSelector();
+            
+            // Reset form
+            document.getElementById('resourceTitle').value = '';
+            document.getElementById('resourceLink').value = '';
+            document.getElementById('resourceNotes').value = '';
+            document.querySelector('input[name="linkType"][value="web"]').checked = true;
+            document.querySelectorAll('#tagSelector .tag-option').forEach(el => el.classList.remove('selected'));
+        }
+
+        function openTagModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('tagModal').classList.add('active');
+            renderTagList();
+        }
+
+        function closeModal(id) {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function closeModalOverlay(e) {
+            if (e.target.id === 'modalOverlay') {
+                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+        }
+
+        // Render tag selector
+        function renderTagSelector() {
+            const selector = document.getElementById('tagSelector');
+            selector.innerHTML = tags.map(tag => `
+                <span class="tag-option" onclick="toggleTagSelection('${tag}')">${tag}</span>
+            `).join('');
+        }
+
+        // Toggle tag selection
+        function toggleTagSelection(tag) {
+            event.target.classList.toggle('selected');
+        }
+
+        // Save resource
+        function saveResource() {
+            const title = document.getElementById('resourceTitle').value.trim();
+            let link = document.getElementById('resourceLink').value.trim();
+            const notes = document.getElementById('resourceNotes').value.trim();
+            const linkType = document.querySelector('input[name="linkType"]:checked').value;
+            const selectedTags = Array.from(document.querySelectorAll('#tagSelector .tag-option.selected'))
+                .map(el => el.textContent);
+            
+            if (!title || !link || selectedTags.length === 0) {
+                showMessage('Please fill in title, link, and select at least one tag', 'error');
+                return;
+            }
+            
+            // For web links, extract URL from iframe if user accidentally pastes iframe code
+            if (linkType === 'web') {
+                if (link.includes('<iframe') && link.includes('src=')) {
+                    const match = link.match(/src=["']([^"']+)["']/);
+                    if (match && match[1]) {
+                        link = match[1];
+                    }
+                }
+                
+                // Validate URL for web links
+                try {
+                    new URL(link);
+                } catch (e) {
+                    showMessage('Please enter a valid URL', 'error');
+                    return;
+                }
+            }
+            
+            resources.push({
+                id: Date.now(),
+                title,
+                link,
+                linkType,
+                notes,
+                tags: selectedTags,
+                createdAt: new Date().toISOString()
+            });
+            
+            saveData();
+            renderResources();
+            closeModal('addModal');
+            showMessage('Resource added successfully', 'success');
+            
+            // Auto-sync if configured
+            if (GIST_ID && GIST_TOKEN) {
+                saveToGist();
+            }
+        }
+
+        // Delete resource
+        function deleteResource(index) {
+            if (confirm('Are you sure you want to delete this resource?')) {
+                resources.splice(index, 1);
+                saveData();
+                renderResources();
+                showMessage('Resource deleted', 'success');
+                
+                // Auto-sync if configured
+                if (GIST_ID && GIST_TOKEN) {
+                    saveToGist();
+                }
+            }
+        }
+
+        // Render tag list
+        function renderTagList() {
+            const list = document.getElementById('tagList');
+            list.innerHTML = tags.map(tag => `
+                <div class="tag-list-item">
+                    <span>${tag}</span>
+                    <button class="icon-btn" onclick="removeTag('${tag}')" title="Remove">✕</button>
+                </div>
+            `).join('');
+        }
+
+        // Add tag
+        function addTag() {
+            const input = document.getElementById('newTagInput');
+            const tagName = input.value.trim();
+            
+            if (!tagName) {
+                showMessage('Please enter a tag name', 'error');
+                return;
+            }
+            
+            if (tags.includes(tagName)) {
+                showMessage('Tag already exists', 'error');
+                return;
+            }
+            
+            tags.push(tagName);
+            saveData();
+            renderTagList();
+            renderTagFilters();
+            input.value = '';
+            showMessage('Tag added successfully', 'success');
+            
+            // Auto-sync if configured
+            if (GIST_ID && GIST_TOKEN) {
+                saveToGist();
+            }
+        }
+
+        // Remove tag
+        function removeTag(tag) {
+            const inUse = resources.some(r => r.tags.includes(tag));
+            
+            if (inUse) {
+                if (!confirm(`The tag "${tag}" is being used. Removing it will also remove it from resources. Continue?`)) {
+                    return;
+                }
+                
+                resources.forEach(r => {
+                    const idx = r.tags.indexOf(tag);
+                    if (idx > -1) r.tags.splice(idx, 1);
+                });
+            }
+            
+            tags = tags.filter(t => t !== tag);
+            activeFilters = activeFilters.filter(f => f !== tag);
+            
+            saveData();
+            renderTagList();
+            renderTagFilters();
+            renderResources();
+            showMessage('Tag removed', 'success');
+            
+            // Auto-sync if configured
+            if (GIST_ID && GIST_TOKEN) {
+                saveToGist();
+            }
+        }
+
+        // Export data
+        function exportData() {
+            const data = {
+                version: '2.0',
+                exportDate: new Date().toISOString(),
+                resources,
+                tags
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `resources-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showMessage('Data exported successfully', 'success');
+        }
+
+        // Import data
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (!data.resources || !data.tags) {
+                        showMessage('Invalid file format', 'error');
+                        return;
+                    }
+                    
+                    if (confirm('This will replace all existing data. Continue?')) {
+                        resources = data.resources;
+                        tags = data.tags;
+                        saveData();
+                        renderResources();
+                        renderTagFilters();
+                        showMessage('Data imported successfully', 'success');
+                        
+                        // Auto-sync if configured
+                        if (GIST_ID && GIST_TOKEN) {
+                            saveToGist();
+                        }
+                    }
+                } catch (error) {
+                    showMessage('Error importing file', 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            event.target.value = '';
+        }
+
+        // Show help
+        function showHelp() {
+            alert(`Training Resource Library - Help
+            
+HOW TO USE:
+1. Click "➕ New" to add a resource
+2. Choose between SharePoint web link or local file path
+3. Enter title, link, and optional notes
+4. Select relevant tags to organize
+5. Click on resources to open them
+
+LINK TYPES:
+• SharePoint Web Link: Opens in browser/new tab
+• Local File Path: Opens in File Explorer (relative path from OneDrive root)
+
+GITHUB SYNC:
+• Configure GIST_ID and GIST_TOKEN at top of file
+• Click "🔄 Sync" to save/load from GitHub Gist
+• Data syncs automatically after changes when configured
+
+TIPS:
+• Use search to find resources quickly (searches title, tags, and notes)
+• Click tags to filter by category
+• Notes are searchable and help describe resources
+• Export data regularly for backup
+• File paths should be relative (e.g., "Company\\Department\\file.pdf")
+
+KEYBOARD SHORTCUTS:
+• Escape - Close modals
+• Ctrl/Cmd + Click - Open multiple resources`);
+        }
+
+        // PWA
+        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed:', err));
+        }
+        
+        // Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showMessage('This app can be installed for offline use!', 'info');
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
