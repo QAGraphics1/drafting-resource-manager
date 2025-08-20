@@ -7,9 +7,20 @@
     <meta name="description" content="Drafting Resource Library">
     <meta name="theme-color" content="#0078d4">
     
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <!-- PWA Meta Tags -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlRyYWluaW5nIFJlc291cmNlIExpYnJhcnkiLAogICJzaG9ydF9uYW1lIjogIlJlc291cmNlcyIsCiAgImRlc2NyaXB0aW9uIjogIlNoYXJlUG9pbnQgVHJhaW5pbmcgUmVzb3VyY2UgTGlicmFyeSIsCiAgInN0YXJ0X3VybCI6ICIvIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAidGhlbWVfY29sb3IiOiAiIzAwNzhkNCIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2YzZjJmMSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImljb25zL2ljb24tNTEyeDUxMi5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIsCiAgICAgICJwdXJwb3NlIjogImFueSIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiaWNvbnMvaWNvbi0yNTZ4MjU2LnBuZyIsCiAgICAgICJzaXplcyI6ICIyNTZ4MjU2IiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJpY29ucy9pY29uLTE5MngxOTIucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImljb25zL2ljb24tMTQ0eDE0NC5wbmciLAogICAgICAic2l6ZXMiOiAiMTQ0eDE0NCIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiaWNvbnMvaWNvbi0xMjh4MTI4LnBuZyIsCiAgICAgICJzaXplcyI6ICIxMjh4MTI4IiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJpY29ucy9pY29uLTk2eDk2LnBuZyIsCiAgICAgICJzaXplcyI6ICI5Nng5NiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Resources">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#0078d4">
+    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
@@ -763,6 +774,7 @@
             renderTagFilters();
             setupLinkTypeToggle();
             updateTokenButton();
+            handleURLShortcuts();
             
             // Try to load from gist if configured and token available
             if (GIST_ID && GIST_TOKEN) {
@@ -1427,11 +1439,100 @@ KEYBOARD SHORTCUTS:
 • Ctrl/Cmd + Click - Open multiple resources`);
         }
 
-        // PWA
+        // PWA and Service Worker
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed:', err));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js', { scope: './' })
+                    .then((registration) => {
+                        console.log('Service Worker registered successfully:', registration);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New version available
+                                    showUpdateAvailable();
+                                }
+                            });
+                        });
+                    })
+                    .catch((err) => {
+                        console.log('Service Worker registration failed:', err);
+                    });
+                
+                // Listen for service worker messages
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data.type === 'BACKGROUND_SYNC') {
+                        handleBackgroundSync(event.data);
+                    }
+                });
+            });
+        }
+
+        // Handle URL shortcuts
+        function handleURLShortcuts() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            
+            if (action === 'add') {
+                setTimeout(() => openAddModal(), 500);
+            } else if (action === 'search') {
+                setTimeout(() => document.getElementById('searchInput').focus(), 500);
+            }
+        }
+
+        // Show update available notification
+        function showUpdateAvailable() {
+            const updateMessage = document.createElement('div');
+            updateMessage.innerHTML = `
+                <div style="position: fixed; top: 60px; left: 50%; transform: translateX(-50%); 
+                           background: var(--ms-white); padding: 16px 24px; border-radius: 4px; 
+                           box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 3000; 
+                           border-left: 4px solid var(--ms-primary); max-width: 400px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">📱 App Update Available</div>
+                    <div style="font-size: 12px; color: var(--ms-gray-130); margin-bottom: 12px;">
+                        A new version is ready to install
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="updateApp()" class="btn btn-primary" style="font-size: 12px; height: 28px;">
+                            Update Now
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                class="btn" style="font-size: 12px; height: 28px;">
+                            Later
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(updateMessage);
+        }
+
+        // Update app
+        function updateApp() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then((registrations) => {
+                    registrations.forEach((registration) => {
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                    });
+                });
+                
+                // Reload page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
+            }
+        }
+
+        // Handle background sync
+        function handleBackgroundSync(data) {
+            if (data.action === 'gist-sync-available' && GIST_ID && GIST_TOKEN) {
+                // Auto-sync when back online
+                saveToGist();
+            }
         }
         
         // Install prompt
@@ -1439,8 +1540,59 @@ KEYBOARD SHORTCUTS:
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            showMessage('This app can be installed for offline use!', 'info');
+            showInstallPrompt();
         });
+
+        function showInstallPrompt() {
+            const installMessage = document.createElement('div');
+            installMessage.innerHTML = `
+                <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+                           background: var(--ms-white); padding: 16px 24px; border-radius: 4px; 
+                           box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 3000; 
+                           border-left: 4px solid #107c10; max-width: 400px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">📱 Install App</div>
+                    <div style="font-size: 12px; color: var(--ms-gray-130); margin-bottom: 12px;">
+                        Add to home screen for quick access and offline use
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="installPWA()" class="btn btn-primary" style="font-size: 12px; height: 28px;">
+                            Install
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                class="btn" style="font-size: 12px; height: 28px;">
+                            Not Now
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(installMessage);
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                if (installMessage.parentNode) {
+                    installMessage.remove();
+                }
+            }, 10000);
+        }
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showMessage('App installed successfully!', 'success');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+            
+            // Remove install prompt
+            document.querySelectorAll('div').forEach(div => {
+                if (div.innerHTML.includes('Install App')) {
+                    div.remove();
+                }
+            });
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
